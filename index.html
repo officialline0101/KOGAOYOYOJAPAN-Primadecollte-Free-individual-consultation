@@ -717,7 +717,7 @@
     </div>
 
     <div class="container">
-        <h1>銀座小顔コルギサロン<br>Prima Décolleté<br>30分個別無料zoom相談会
+        <h1>小顔ビジュ診断✖整形級メソッド<br>30分個別無料zoom相談会
         </h1>
         <div class="label">お客様名<span class="required">必須</span></div>
         <input type="text" id="name" placeholder="お名前を入力してください" oninput="saveInput('name')">
@@ -731,6 +731,15 @@
         <div class="symptoms">
             <button type="button" onclick="selectSymptom(this, 'treatment1')" data-price="15000">30分個別無料zoom相談会</button>
         </div>
+
+        <div class="label">現在のお悩みはありますか？</div>
+        <textarea id="message2" rows="3" placeholder="入力してください"></textarea> <!-- メッセージ入力フィールド -->
+
+        <div class="label">ご自身の理想のイメージはありますか？<br>具体的に教えて下さい</div>
+        <textarea id="message3" rows="3" placeholder="入力してください"></textarea> <!-- メッセージ入力フィールド -->
+
+        <div class="label">ヨーヨーの個別無料相談会に<br>申し込みしたい理由を教えて下さい。</div>
+        <textarea id="message4" rows="3" placeholder="入力してください"></textarea> <!-- メッセージ入力フィールド -->
 
         <div class="label">希望日時<span class="required">必須</span></div>
         <div class="calendar-container">
@@ -1167,7 +1176,10 @@
                 selectedSymptom: selectedSymptom && selectedSymptom.length > 0 ? selectedSymptom : null, // 空の選択肢をチェック
                 irradiationsCount: irradiationsCount,
                 dates: selectedFullDate ? [selectedFullDate] : null, // 空チェック
-                message: document.getElementById('message').value.trim()
+                message: document.getElementById('message').value.trim(),
+                message2: document.getElementById('message2').value.trim(),
+                message3: document.getElementById('message3').value.trim(),
+                message4: document.getElementById('message4').value.trim()
             };
 
             // フォームデータのチェック
@@ -1181,15 +1193,38 @@
                 return;
             }
 
+            if (!formData.selectedSymptom) {
+                alert('メニューを選択してください。');
+                return;
+            }
+
             if (!formData.dates) {
                 alert('希望日時を選択してください。');
+                return;
+            }
+
+            // フォームデータのチェック
+            if (!formData.message2) {
+                alert('現在のお悩みはありますか？を入力してください。');
+                return;
+            }
+
+            // フォームデータのチェック
+            if (!formData.message3) {
+                alert('ご自身の理想のイメージはありますか？を入力してください。');
+                return;
+            }
+
+            // フォームデータのチェック
+            if (!formData.message4) {
+                alert('申し込みしたい理由を教えて下さい。を入力してください。');
                 return;
             }
 
             // LINEトークにメッセージを送信
             liff.sendMessages([{
                 type: 'text',
-                text: `【予約フォーム】\nお名前：${formData.name}\n電話番号：${formData.phone}\nご来店回数：${formData.visitCount}\nメニュー：${formData.selectedSymptom}\n希望日時：\n ${formData.dates[0]}\nメッセージ：${formData.message}`
+                text: `【相談フォーム】\nお名前：${formData.name}\n電話番号：${formData.phone}\nご来店回数：${formData.visitCount}\nメニュー：${formData.selectedSymptom}\n\nお悩み：\n・${formData.message2}\n\nイメージ：\n・${formData.message3}\n\n理由：\n・${formData.message4}\n希望日時：\n ${formData.dates[0]}\nメッセージ：${formData.message}`
             }]).then(() => {
                 /* メッセージ送信成功時の処理 */
                 alert('当日キャンセルは無いようにお願いいたします。');
