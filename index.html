@@ -1364,33 +1364,35 @@
                     // メニュー時間と訪問回数の時間を合計して、終了時間を設定
                     slotEnd.setMinutes(slotStart.getMinutes() + menuDuration + visitDuration + irradiationsDuration);
 
-    // ✅ 追加：1週間後以降はすべて✕にする
+    // ✅ 追加：1週間後以降はすべて✕にする（ただし除外日あり）
     const sevenDaysLater = new Date(now);
-    sevenDaysLater.setDate(now.getDate() + 5);
-    if (slotStart >= sevenDaysLater) {
+    sevenDaysLater.setDate(now.getDate() + 5); // ←5日後以降を対象にする場合
+    const slotDateString = slotStart.toISOString().split('T')[0];
+
+    // ✖にしない例外日リスト（5月2日と5月7日）
+    const exceptionDates = ['2025-05-02', '2025-05-07'];
+
+    if (slotStart >= sevenDaysLater && !exceptionDates.includes(slotDateString)) {
         cell.textContent = '✕';
         cell.classList.add('unavailable');
         continue;
     }
 
-// セルのスロット日付を yyyy-mm-dd 形式に変換
-const slotDateString = slotStart.toISOString().split('T')[0];
+    // ✖にしたい特定日付のリスト
+    const blockDates = [
+        '2025-04-21',
+        '2025-04-22',
+        '2025-04-24',
+        '2025-04-26',
+        '2025-04-27'
+    ];
 
-// ✖にしたい特定日付のリスト
-const blockDates = [
-    '2025-04-21',
-    '2025-04-22',
-    '2025-04-24',
-    '2025-04-26',
-    '2025-04-27'
-];
-
-// ✅ 追加：特定日付は✕にする
-if (blockDates.includes(slotDateString)) {
-    cell.textContent = '✕';
-    cell.classList.add('unavailable');
-    continue;
-}
+    // ✅ 追加：特定日付は✕にする
+    if (blockDates.includes(slotDateString)) {
+        cell.textContent = '✕';
+        cell.classList.add('unavailable');
+        continue;
+    }
 
                     // 終了時間が翌日 (0時以降) になる場合は✕に設定
                     if (slotEnd.getDate() !== slotStart.getDate()) {
